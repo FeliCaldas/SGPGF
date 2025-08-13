@@ -1,0 +1,567 @@
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestão de Peso - Pesqueira</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a'
+                        },
+                        slate: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a'
+                        }
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .custom-shadow {
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+        .custom-shadow-lg {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-900 antialiased">
+    <!-- Landing Page with Authentication -->
+    <div id="landing-page" class="min-h-screen gradient-bg flex items-center justify-center p-4">
+        <!-- @COMPONENT: LandingPage -->
+        <div class="max-w-md w-full">
+            <div class="bg-white rounded-2xl custom-shadow-lg p-8">
+                <div class="text-center mb-8">
+                    <!-- Company logo placeholder -->
+                    <div class="mx-auto h-16 w-16 bg-primary-600 rounded-full flex items-center justify-center mb-4">
+                        <i data-lucide="fish" class="h-8 w-8 text-white"></i>
+                    </div>
+                    <h1 class="text-2xl font-bold text-slate-900 mb-2">Sistema de Gestão de Peso</h1>
+                    <p class="text-slate-600">Pesqueira - Controle de Produção</p>
+                </div>
+                
+                <div class="space-y-4">
+                    <!-- Authentication buttons -->
+                    <button class="w-full bg-primary-600 hover:bg-primary-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2">
+                        <i data-lucide="log-in" class="h-5 w-5"></i>
+                        Entrar com Conta
+                    </button>
+                    
+                    <div class="text-center">
+                        <p class="text-sm text-slate-600">Sistema seguro para funcionários da pesqueira</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: LandingPage -->
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="admin-dashboard" class="min-h-screen bg-slate-50 hidden">
+        <!-- @COMPONENT: AdminDashboard -->
+        
+        <!-- Mobile Navigation Header -->
+        <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+            <div class="px-4 py-3">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="h-8 w-8 bg-primary-600 rounded-lg flex items-center justify-center">
+                            <i data-lucide="fish" class="h-5 w-5 text-white"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-lg font-semibold text-slate-900">Painel Admin</h1>
+                            <p class="text-xs text-slate-600">Gestão de Usuários e Pesos</p>
+                        </div>
+                    </div>
+                    <button class="p-2 hover:bg-slate-100 rounded-lg transition-colors">
+                        <i data-lucide="menu" class="h-5 w-5 text-slate-600"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="p-4 space-y-6">
+            <!-- Statistics Cards -->
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-white rounded-xl p-4 custom-shadow">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-primary-50 rounded-lg">
+                            <i data-lucide="users" class="h-5 w-5 text-primary-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-slate-600">Usuários Ativos</p>
+                            <p class="text-2xl font-bold text-slate-900" data-bind="stats.activeUsers">24</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl p-4 custom-shadow">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-green-50 rounded-lg">
+                            <i data-lucide="scale" class="h-5 w-5 text-green-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-slate-600">Peso Hoje</p>
+                            <p class="text-2xl font-bold text-slate-900" data-bind="stats.todayWeight">1.2t</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weight Entry Form -->
+            <div class="bg-white rounded-xl p-6 custom-shadow">
+                <h2 class="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                    <i data-lucide="plus-circle" class="h-5 w-5 text-primary-600"></i>
+                    Registrar Peso
+                </h2>
+                
+                <form class="space-y-4">
+                    <!-- User Selection -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Funcionário</label>
+                        <select class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                            <option>Selecione um funcionário</option>
+                            <option data-mock="true">João Silva</option>
+                            <option data-mock="true">Maria Santos</option>
+                            <option data-mock="true">Pedro Costa</option>
+                        </select>
+                    </div>
+
+                    <!-- Work Type -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Tipo de Trabalho</label>
+                        <select class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                            <option>Selecione o tipo</option>
+                            <option data-mock="true">Pesca</option>
+                            <option data-mock="true">Processamento</option>
+                            <option data-mock="true">Embalagem</option>
+                        </select>
+                    </div>
+
+                    <!-- Weight Input -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Peso (kg)</label>
+                        <input type="number" placeholder="Ex: 150.5" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" data-mock="true">
+                    </div>
+
+                    <!-- Notes -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Observações (opcional)</label>
+                        <textarea placeholder="Adicione observações sobre o registro..." rows="3" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 resize-none" data-mock="true"></textarea>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="w-full bg-primary-600 hover:bg-primary-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2" data-event="click:handleWeightSubmit">
+                        <i data-lucide="save" class="h-5 w-5"></i>
+                        Salvar Registro
+                    </button>
+                </form>
+            </div>
+
+            <!-- User Management -->
+            <div class="bg-white rounded-xl p-6 custom-shadow">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                        <i data-lucide="users" class="h-5 w-5 text-primary-600"></i>
+                        Gerenciar Usuários
+                    </h2>
+                    <button class="p-2 hover:bg-slate-100 rounded-lg transition-colors">
+                        <i data-lucide="plus" class="h-5 w-5 text-slate-600"></i>
+                    </button>
+                </div>
+
+                <!-- User List -->
+                <div class="space-y-3">
+                    <!-- @MAP: users.map(user => ( -->
+                    <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                        <div class="flex items-center gap-3">
+                            <div class="h-10 w-10 bg-primary-100 rounded-full flex items-center justify-center">
+                                <span class="text-primary-600 font-medium text-sm" data-mock="true">JS</span>
+                            </div>
+                            <div>
+                                <p class="font-medium text-slate-900" data-mock="true">João Silva</p>
+                                <p class="text-sm text-slate-600" data-mock="true">Pesca • Ativo</p>
+                            </div>
+                        </div>
+                        <button class="p-1 hover:bg-slate-200 rounded">
+                            <i data-lucide="more-vertical" class="h-4 w-4 text-slate-600"></i>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                        <div class="flex items-center gap-3">
+                            <div class="h-10 w-10 bg-primary-100 rounded-full flex items-center justify-center">
+                                <span class="text-primary-600 font-medium text-sm" data-mock="true">MS</span>
+                            </div>
+                            <div>
+                                <p class="font-medium text-slate-900" data-mock="true">Maria Santos</p>
+                                <p class="text-sm text-slate-600" data-mock="true">Processamento • Ativo</p>
+                            </div>
+                        </div>
+                        <button class="p-1 hover:bg-slate-200 rounded">
+                            <i data-lucide="more-vertical" class="h-4 w-4 text-slate-600"></i>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                        <div class="flex items-center gap-3">
+                            <div class="h-10 w-10 bg-slate-100 rounded-full flex items-center justify-center">
+                                <span class="text-slate-600 font-medium text-sm" data-mock="true">PC</span>
+                            </div>
+                            <div>
+                                <p class="font-medium text-slate-900" data-mock="true">Pedro Costa</p>
+                                <p class="text-sm text-slate-500" data-mock="true">Embalagem • Inativo</p>
+                            </div>
+                        </div>
+                        <button class="p-1 hover:bg-slate-200 rounded">
+                            <i data-lucide="more-vertical" class="h-4 w-4 text-slate-600"></i>
+                        </button>
+                    </div>
+                    <!-- @END_MAP )) -->
+                </div>
+            </div>
+
+            <!-- Analytics Section -->
+            <div class="bg-white rounded-xl p-6 custom-shadow">
+                <h2 class="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                    <i data-lucide="bar-chart-3" class="h-5 w-5 text-primary-600"></i>
+                    Estatísticas
+                </h2>
+
+                <!-- Time Filter -->
+                <div class="flex gap-2 mb-4">
+                    <button class="px-3 py-1 bg-primary-600 text-white rounded-lg text-sm">Hoje</button>
+                    <button class="px-3 py-1 bg-slate-100 text-slate-700 rounded-lg text-sm">Semana</button>
+                    <button class="px-3 py-1 bg-slate-100 text-slate-700 rounded-lg text-sm">Mês</button>
+                </div>
+
+                <!-- Chart Placeholder -->
+                <div class="h-40 bg-slate-50 rounded-lg flex items-center justify-center border-2 border-dashed border-slate-300">
+                    <div class="text-center">
+                        <i data-lucide="trending-up" class="h-8 w-8 text-slate-400 mx-auto mb-2"></i>
+                        <p class="text-slate-600 text-sm">Gráfico de Produção</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-4 py-2">
+            <div class="flex items-center justify-around">
+                <button class="flex flex-col items-center gap-1 p-2 text-primary-600">
+                    <i data-lucide="home" class="h-5 w-5"></i>
+                    <span class="text-xs">Início</span>
+                </button>
+                <button class="flex flex-col items-center gap-1 p-2 text-slate-600">
+                    <i data-lucide="scale" class="h-5 w-5"></i>
+                    <span class="text-xs">Pesos</span>
+                </button>
+                <button class="flex flex-col items-center gap-1 p-2 text-slate-600">
+                    <i data-lucide="users" class="h-5 w-5"></i>
+                    <span class="text-xs">Usuários</span>
+                </button>
+                <button class="flex flex-col items-center gap-1 p-2 text-slate-600">
+                    <i data-lucide="settings" class="h-5 w-5"></i>
+                    <span class="text-xs">Config</span>
+                </button>
+            </div>
+        </nav>
+        <!-- @END_COMPONENT: AdminDashboard -->
+    </div>
+
+    <!-- User Dashboard -->
+    <div id="user-dashboard" class="min-h-screen bg-slate-50 hidden">
+        <!-- @COMPONENT: UserDashboard -->
+        
+        <!-- Mobile Header -->
+        <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+            <div class="px-4 py-3">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="h-10 w-10 bg-primary-100 rounded-full flex items-center justify-center">
+                            <span class="text-primary-600 font-medium" data-mock="true">JS</span>
+                        </div>
+                        <div>
+                            <h1 class="text-lg font-semibold text-slate-900" data-bind="user.name">João Silva</h1>
+                            <p class="text-sm text-slate-600" data-bind="user.workType">Pesca</p>
+                        </div>
+                    </div>
+                    <button class="p-2 hover:bg-slate-100 rounded-lg transition-colors">
+                        <i data-lucide="log-out" class="h-5 w-5 text-slate-600"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="p-4 space-y-6 pb-20">
+            <!-- Personal Stats -->
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-white rounded-xl p-4 custom-shadow">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-green-50 rounded-lg">
+                            <i data-lucide="calendar" class="h-5 w-5 text-green-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-slate-600">Hoje</p>
+                            <p class="text-2xl font-bold text-slate-900" data-bind="stats.today">45kg</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl p-4 custom-shadow">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-blue-50 rounded-lg">
+                            <i data-lucide="trending-up" class="h-5 w-5 text-blue-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-slate-600">Este Mês</p>
+                            <p class="text-2xl font-bold text-slate-900" data-bind="stats.month">1.2t</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Weight Entry -->
+            <div class="bg-white rounded-xl p-6 custom-shadow">
+                <h2 class="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                    <i data-lucide="plus-circle" class="h-5 w-5 text-primary-600"></i>
+                    Registrar Peso
+                </h2>
+                
+                <form class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Peso (kg)</label>
+                        <input type="number" placeholder="Ex: 45.5" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-lg" data-mock="true">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Observações</label>
+                        <textarea placeholder="Adicione observações..." rows="2" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 resize-none" data-mock="true"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-primary-600 hover:bg-primary-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2" data-event="click:handleUserWeightSubmit">
+                        <i data-lucide="save" class="h-5 w-5"></i>
+                        Salvar Registro
+                    </button>
+                </form>
+            </div>
+
+            <!-- Recent Records -->
+            <div class="bg-white rounded-xl p-6 custom-shadow">
+                <h2 class="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                    <i data-lucide="history" class="h-5 w-5 text-primary-600"></i>
+                    Registros Recentes
+                </h2>
+                
+                <div class="space-y-3">
+                    <!-- @MAP: recentRecords.map(record => ( -->
+                    <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 bg-green-50 rounded-lg">
+                                <i data-lucide="scale" class="h-4 w-4 text-green-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-slate-900" data-mock="true">45.5 kg</p>
+                                <p class="text-sm text-slate-600" data-mock="true">Hoje • 14:30</p>
+                            </div>
+                        </div>
+                        <button class="p-1 hover:bg-slate-200 rounded">
+                            <i data-lucide="edit" class="h-4 w-4 text-slate-600"></i>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 bg-green-50 rounded-lg">
+                                <i data-lucide="scale" class="h-4 w-4 text-green-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-slate-900" data-mock="true">52.0 kg</p>
+                                <p class="text-sm text-slate-600" data-mock="true">Ontem • 16:45</p>
+                            </div>
+                        </div>
+                        <button class="p-1 hover:bg-slate-200 rounded">
+                            <i data-lucide="edit" class="h-4 w-4 text-slate-600"></i>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 bg-green-50 rounded-lg">
+                                <i data-lucide="scale" class="h-4 w-4 text-green-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-slate-900" data-mock="true">38.5 kg</p>
+                                <p class="text-sm text-slate-600" data-mock="true">23/01 • 15:20</p>
+                            </div>
+                        </div>
+                        <button class="p-1 hover:bg-slate-200 rounded">
+                            <i data-lucide="edit" class="h-4 w-4 text-slate-600"></i>
+                        </button>
+                    </div>
+                    <!-- @END_MAP )) -->
+                </div>
+            </div>
+
+            <!-- Personal Analytics -->
+            <div class="bg-white rounded-xl p-6 custom-shadow">
+                <h2 class="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                    <i data-lucide="bar-chart-3" class="h-5 w-5 text-primary-600"></i>
+                    Minhas Estatísticas
+                </h2>
+
+                <!-- Chart Placeholder -->
+                <div class="h-32 bg-slate-50 rounded-lg flex items-center justify-center border-2 border-dashed border-slate-300 mb-4">
+                    <div class="text-center">
+                        <i data-lucide="trending-up" class="h-6 w-6 text-slate-400 mx-auto mb-1"></i>
+                        <p class="text-slate-600 text-sm">Gráfico Pessoal</p>
+                    </div>
+                </div>
+
+                <!-- Weekly Summary -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="text-center p-3 bg-slate-50 rounded-lg">
+                        <p class="text-sm text-slate-600">Média Semanal</p>
+                        <p class="text-xl font-bold text-slate-900" data-bind="stats.weeklyAvg">42.3kg</p>
+                    </div>
+                    <div class="text-center p-3 bg-slate-50 rounded-lg">
+                        <p class="text-sm text-slate-600">Melhor Dia</p>
+                        <p class="text-xl font-bold text-slate-900" data-bind="stats.bestDay">55.2kg</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-4 py-2">
+            <div class="flex items-center justify-around">
+                <button class="flex flex-col items-center gap-1 p-2 text-primary-600">
+                    <i data-lucide="home" class="h-5 w-5"></i>
+                    <span class="text-xs">Início</span>
+                </button>
+                <button class="flex flex-col items-center gap-1 p-2 text-slate-600">
+                    <i data-lucide="plus-circle" class="h-5 w-5"></i>
+                    <span class="text-xs">Registrar</span>
+                </button>
+                <button class="flex flex-col items-center gap-1 p-2 text-slate-600">
+                    <i data-lucide="history" class="h-5 w-5"></i>
+                    <span class="text-xs">Histórico</span>
+                </button>
+                <button class="flex flex-col items-center gap-1 p-2 text-slate-600">
+                    <i data-lucide="user" class="h-5 w-5"></i>
+                    <span class="text-xs">Perfil</span>
+                </button>
+            </div>
+        </nav>
+        <!-- @END_COMPONENT: UserDashboard -->
+    </div>
+
+    <!-- Loading States -->
+    <div id="loading-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-6 flex items-center gap-3">
+            <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600"></div>
+            <p class="text-slate-900">Carregando...</p>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2">
+        <!-- Success Toast -->
+        <div class="bg-green-600 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 hidden" id="success-toast">
+            <i data-lucide="check-circle" class="h-5 w-5"></i>
+            <span>Registro salvo com sucesso!</span>
+        </div>
+        
+        <!-- Error Toast -->
+        <div class="bg-red-600 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 hidden" id="error-toast">
+            <i data-lucide="alert-circle" class="h-5 w-5"></i>
+            <span>Erro ao salvar registro. Tente novamente.</span>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Demo navigation between screens
+        (function() {
+            const landingPage = document.getElementById('landing-page');
+            const adminDashboard = document.getElementById('admin-dashboard');
+            const userDashboard = document.getElementById('user-dashboard');
+            
+            // Show admin dashboard by default for demo
+            setTimeout(() => {
+                landingPage.classList.add('hidden');
+                adminDashboard.classList.remove('hidden');
+            }, 1000);
+
+            // Toggle between admin and user dashboards
+            let isAdmin = true;
+            setInterval(() => {
+                if (isAdmin) {
+                    adminDashboard.classList.add('hidden');
+                    userDashboard.classList.remove('hidden');
+                } else {
+                    userDashboard.classList.add('hidden');
+                    adminDashboard.classList.remove('hidden');
+                }
+                isAdmin = !isAdmin;
+            }, 10000);
+        })();
+
+        // Form submission handlers
+        document.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Show loading state
+            const loadingOverlay = document.getElementById('loading-overlay');
+            loadingOverlay.classList.remove('hidden');
+            
+            // Simulate API call
+            setTimeout(() => {
+                loadingOverlay.classList.add('hidden');
+                
+                // Show success toast
+                const successToast = document.getElementById('success-toast');
+                successToast.classList.remove('hidden');
+                
+                // Hide toast after 3 seconds
+                setTimeout(() => {
+                    successToast.classList.add('hidden');
+                }, 3000);
+                
+                // Clear form
+                e.target.reset();
+            }, 1500);
+        });
+
+        // Smooth scrolling for mobile
+        document.documentElement.style.scrollBehavior = 'smooth';
+    </script>
+</body>
+</html>
